@@ -103,7 +103,6 @@ module Fluent
             else
                 record['violations']['observedEntity']['name-decode']=record['violations']['policyEntity']['parameters'][0]['name']
             end  
-
           when 'VIOL_URL_LENGTH', 'VIOL_POST_DATA_LENGTH', 'VIOL_QUERY_STRING_LENGTH', 'VIOL_REQUEST_LENGTH', 'VIOL_COOKIE_LENGTH', 'VIOL_HEADER_LENGTH'
             # If filetype is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
             # Notes: Why is filetypes an array!!
@@ -112,7 +111,12 @@ module Fluent
             else
                 record['violations']['observedEntity']['name-decode']=record['violations']['policyEntity']['filetypes'][0]['name']
             end            
-
+          when 'VIOL_EVASION'
+            # if the observed entity is parameter then base64-decode the parameter
+            if record['violations']['observedEntity']['scope']=="parameter"
+              record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
+              record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) #base64 decode
+            end 
         end
         record
       end  
