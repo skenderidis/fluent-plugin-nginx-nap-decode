@@ -33,63 +33,53 @@ module Fluent
                 #If attack signature is found on cookies
 
                 if record['violations']['policyEntity'].has_key?('cookies')
-                  record['violations']['context']='cookies'
-                  record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) #base64 decode
-                  if record['violations'].has_key?('snippet')
-                    record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) #base64 decode
-                  end
-                  # If header is explicit then the NAP does NOT provide the "observedEntity". This
-                  # This creates a problem with reporting later on, so we added the record "name"
-                  # Notes: Why is parameters an array!!
+                  record['violations']['context']='cookies' #Create context that is missing
+                  record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value'])
+                  record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) if record['violations'].has_key?('snippet')
+                  
+                  # If header is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
                   if record['violations']['policyEntity']['cookies'][0]['type']=="wildcard"
-                      record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
+                      record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) 
                   else
                       record['violations']['observedEntity']['name-decode']=record['violations']['policyEntity']['cookies'][0]['name']
                   end
                 end
+
                 if record['violations']['policyEntity'].has_key?('headers')
-                  record['violations']['context']='headers'
-                  record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) #base64 decode
-                  if record['violations'].has_key?('snippet')
-                    record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) #base64 decode
-                  end          
-                  # If header is explicit then the NAP does NOT provide the "observedEntity". This
-                  # This creates a problem with reporting later on, so we added the record "name"
-                  # Notes: Why is parameters an array!!
+                  record['violations']['context']='headers' #Create context that is missing
+                  record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value'])
+                  record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) if record['violations'].has_key?('snippet')
+
+                  # If header is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
                   if record['violations']['policyEntity']['headers'][0]['type']=="wildcard"
-                      record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
+                      record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name'])
                   else
                       record['violations']['observedEntity']['name-decode']=record['violations']['policyEntity']['headers'][0]['name']
                   end
                 end
+
                 if record['violations']['policyEntity'].has_key?('parameters')
-                  record['violations']['context']='parameters'
+                  record['violations']['context']='parameters' #Create context that is missing
                   
-                  record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) #base64 decode
-                  if record['violations'].has_key?('snippet')
-                    record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) #base64 decode
-                  end                
-                  # If parameter is explicit then the NAP does NOT provide the "observedEntity". This
-                  # This creates a problem with reporting later on, so we added the record "name"
-                  # Notes: Why is parameters an array!!
+                  record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) 
+                  record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) if record['violations'].has_key?('snippet')
+                  
+                  # If parameter is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
                   if record['violations']['policyEntity']['parameters'][0]['type']=="wildcard"
-                      record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
+                      record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) 
                   else
                       record['violations']['observedEntity']['name-decode']=record['violations']['policyEntity']['parameters'][0]['name']
                   end
-                end               
+                end
+
                 if record['violations']['policyEntity'].has_key?('urls')
-                  record['violations']['context']='urls'
-                  if record['violations'].has_key?('snippet')
-                    record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) #base64 decode
-                  end
-                  record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
+                  record['violations']['context']='urls' #Create context that is missing
+                  record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) if record['violations'].has_key?('snippet')
+                  record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name'])
                 end
             else
                 record['violations']['context']='request'
-                if record['violations'].has_key?('snippet')
-                  record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) #base64 decode
-                end
+                record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) if record['violations'].has_key?('snippet')
             end
 
 
@@ -98,20 +88,24 @@ module Fluent
 
           when 'VIOL_PARAMETER_VALUE_METACHAR', 'VIOL_PARAMETER_DATA_TYPE', 'VIOL_PARAMETER_NUMERIC_VALUE', 'VIOL_PARAMETER_VALUE_LENGTH', 'VIOL_PARAMETER_ARRAY_VALUE', 'VIOL_PARAMETER_LOCATION', 'VIOL_PARAMETER_STATIC_VALUE'
             record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) #base64 decode
-            # If parameter is explicit then the NAP does NOT provide the "observedEntity".
-            # For consistency we create the observedEntity.value
-            # This creates a problem with reporting later on, so we added the record "name"
+            # If parameter is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
             # Notes: Why is parameters an array!!
             if record['violations']['policyEntity']['parameters'][0]['type']=="wildcard"
                 record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
             else
                 record['violations']['observedEntity']['name-decode']=record['violations']['policyEntity']['parameters'][0]['name']
             end
+          when 'VIOL_PARAMETER_EMPTY_VALUE', 'VIOL_PARAMETER'
+            # If filetype is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
+            # Notes: Why is filetypes an array!!
+            if record['violations']['policyEntity']['parameters'][0]['type']=="wildcard"
+                record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
+            else
+                record['violations']['observedEntity']['name-decode']=record['violations']['policyEntity']['parameters'][0]['name']
+            end  
 
-          when 'VIOL_URL_LENGTH', 'VIOL_POST_DATA_LENGTH', 'VIOL_QUERY_STRING_LENGTH', 'VIOL_REQUEST_LENGTH', 'VIOL_PARAMETER_EMPTY_VALUE', 'VIOL_COOKIE_LENGTH', 'VIOL_HEADER_LENGTH', 'VIOL_PARAMETER'
-            # If filetype is explicit then the NAP does NOT provide the "observedEntity".
-            # For consistency we create the observedEntity.value
-            # This creates a problem with reporting later on, so we added the record "name"
+          when 'VIOL_URL_LENGTH', 'VIOL_POST_DATA_LENGTH', 'VIOL_QUERY_STRING_LENGTH', 'VIOL_REQUEST_LENGTH', 'VIOL_COOKIE_LENGTH', 'VIOL_HEADER_LENGTH'
+            # If filetype is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
             # Notes: Why is filetypes an array!!
             if record['violations']['policyEntity']['filetypes'][0]['type']=="wildcard"
                 record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
