@@ -86,7 +86,7 @@ module Fluent
           when 'VIOL_COOKIE_LENGTH', 'VIOL_HEADER_LENGTH', 'VIOL_URL_METACHAR'
             record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
 
-          when 'VIOL_PARAMETER_VALUE_METACHAR', 'VIOL_PARAMETER_DATA_TYPE', 'VIOL_PARAMETER_NUMERIC_VALUE', 'VIOL_PARAMETER_VALUE_LENGTH', 'VIOL_PARAMETER_ARRAY_VALUE', 'VIOL_PARAMETER_LOCATION', 'VIOL_PARAMETER_STATIC_VALUE'
+          when 'VIOL_PARAMETER_VALUE_METACHAR', 'VIOL_PARAMETER_NAME_METACHAR', 'VIOL_PARAMETER_DATA_TYPE', 'VIOL_PARAMETER_NUMERIC_VALUE', 'VIOL_PARAMETER_VALUE_LENGTH', 'VIOL_PARAMETER_ARRAY_VALUE', 'VIOL_PARAMETER_LOCATION', 'VIOL_PARAMETER_STATIC_VALUE'
             record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) #base64 decode
             # If parameter is explicit then the NAP does NOT provide the "observedEntity". This creates a problem with reporting later on, so we added the record "name"
             # Notes: Why is parameters an array!!

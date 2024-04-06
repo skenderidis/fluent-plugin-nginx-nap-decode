@@ -3,7 +3,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 
 Gem::Specification.new do |spec|
   spec.name    = "fluent-plugin-nginx-nap-decode"
-  spec.version = "1.0.1"
+  spec.version = "1.0.2"
   spec.authors = ["Kostas Skenderidis"]
   spec.email   = ["skenderidis@gmail.com"]
 
