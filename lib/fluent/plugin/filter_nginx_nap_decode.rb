@@ -116,7 +116,10 @@ module Fluent
             if record['violations']['observedEntity']['scope']=="parameter"
               record['violations']['observedEntity']['name-decode']=Base64.decode64(record['violations']['observedEntity']['name']) #base64 decode
               record['violations']['observedEntity']['value-decode']=Base64.decode64(record['violations']['observedEntity']['value']) #base64 decode
-            end 
+            
+              record['violations']['snippet']['buffer-decode']=Base64.decode64(record['violations']['snippet']['buffer']) if record['violations'].has_key?('snippet')
+
+            end
         end
         record
       end  
